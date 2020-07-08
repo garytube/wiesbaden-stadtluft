@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Banner from './components/banner/banner';
+import Banner from './components/banner';
 import axios from 'axios';
 
 export default function App() {
   const [no2, setNo2] = useState(null);
   const [time, setTime] = useState(null);
   const [error, setError] = useState(null);
-  const apiUrlProxied =
-    'https://cors-anywhere.herokuapp.com/https://www.stadtluft-anzeiger.de/getTreeLEDAPIv2.php?stationid=136-ringkirche';
-
+  //   const apiUrlProxied = 'https://www.stadtluft-anzeiger.de/getTreeLEDAPIv2.php?stationid=136-ringkirche';
+  const api = 'https://api.stadtluft-anzeiger.de/api/v2/stations/136-ringkirche/measurements?limit=1';
   useEffect(() => {
     axios
-      .get(apiUrlProxied)
+      .get(api, { mode: 'no-cors' })
       .then(({ data }) => {
-        setNo2(data.no2);
-        setTime(data.tm);
+        const measured_at = new Date(data.data[0].measured_at.date);
+        setNo2(data.data[0].no2);
+        setTime(measured_at.getHours());
       })
       .catch(setError);
   }, []);
